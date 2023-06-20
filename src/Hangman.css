@@ -56,3 +56,17 @@
   color: #eeeeee;
   box-shadow: 0 6px #9e9e9e;
 }
+
+#reset {
+  width: auto;
+  padding: 5px 20px;
+  background-color: #9c27b0;
+  box-shadow: 0 6px#571474;
+  font-weight: bolder;
+  font-size: larger;
+}
+
+#reset:hover {
+  background-color: #bc5ace;
+  box-shadow: 0 6px#7f20a8;
+}
