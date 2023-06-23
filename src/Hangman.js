@@ -8,64 +8,116 @@ import img4 from "./4.jpg";
 import img5 from "./5.jpg";
 import img6 from "./6.jpg";
 
+import { randomWord, fetchWords } from "./api";
+
 class Hangman extends Component {
-  /** by default, allow 6 guesses and use provided gallows images. */
   static defaultProps = {
     maxWrong: 6,
-    images: [img0, img1, img2, img3, img4, img5, img6]
+    images: [img0, img1, img2, img3, img4, img5, img6],
   };
-
   constructor(props) {
     super(props);
-    this.state = { nWrong: 0, guessed: new Set(), answer: "apple" };
+    this.state = {
+      nWrong: 0,
+      guessed: new Set(),
+      answer: undefined,
+      limit: false,
+      words: undefined,
+    };
     this.handleGuess = this.handleGuess.bind(this);
+    this.restart = this.restart.bind(this);
   }
 
-  /** guessedWord: show current-state of word:
-    if guessed letters are {a,p,e}, show "app_e" for "apple"
-  */
+  //die lädt die Wörter
+  //das führt react aus
+  async componentDidMount() {
+    const words = await fetchWords();
+    console.log(words);
+    this.setState({
+      ...this.state,
+      answer: randomWord(words),
+      words,
+    });
+  }
+
+  restart() {
+    if (this.state.limit === true) {
+      this.setState({
+        ...this.state,
+        answer: randomWord(this.state.words),
+        limit: false,
+        nWrong: 0,
+        guessed: new Set(),
+      });
+    } else {
+      return;
+    }
+  }
   guessedWord() {
-    return this.state.answer
-      .split("")
-      .map(ltr => (this.state.guessed.has(ltr) ? ltr : "_"));
+    if (this.state.limit === false && this.state.answer) {
+      const guessedWord = this.state.answer
+        .split("")
+        .map((ltr) => (this.state.guessed.has(ltr) ? ltr : "_"))
+        .join("");
+      if (guessedWord === this.state.answer) {
+        return "YOU WIN!";
+      } else {
+        return guessedWord;
+      }
+    } else {
+      return this.state.answer;
+    }
   }
-
-  /** handleGuest: handle a guessed letter:
-    - add to guessed letters
-    - if not in answer, increase number-wrong guesses
-  */
   handleGuess(evt) {
+    if (this.state.limit) {
+      return;
+    }
     let ltr = evt.target.value;
-    this.setState(st => ({
-      guessed: st.guessed.add(ltr),
-      nWrong: st.nWrong + (st.answer.includes(ltr) ? 0 : 1)
-    }));
+    const checkLossCondition = () => {
+      const { maxWrong } = this.props;
+      if (this.state.nWrong > maxWrong) {
+        this.setState({
+          limit: true,
+        });
+      }
+    };
+    this.setState(
+      (st) => ({
+        guessed: st.guessed.add(ltr),
+        nWrong: st.nWrong + (st.answer.includes(ltr) ? 0 : 1),
+      }),
+      checkLossCondition,
+    );
   }
-
-  /** generateButtons: return array of letter buttons to render */
   generateButtons() {
-    return "abcdefghijklmnopqrstuvwxyz".split("").map(ltr => (
+    return "abcdefghijklmnopqrstuvwxyz".split("").map((ltr) => (
       <button
+        key={ltr}
         value={ltr}
         onClick={this.handleGuess}
-        disabled={this.state.guessed.has(ltr)}
-      >
+        disabled={this.state.guessed.has(ltr)}>
         {ltr}
       </button>
     ));
   }
-
-  /** render: render game */
   render() {
     return (
       <div className='Hangman'>
         <h1>Hangman</h1>
-        <img src={this.props.images[this.state.nWrong]} />
+        {!this.state.limit && (
+          <img src={this.props.images[this.state.nWrong]} />
+        )}
+        {this.state.limit && <p>YOU LOSE ㅠ_ㅠ</p>}
+        {this.state.limit && (
+          <button id='reset' onClick={this.restart}>
+            Restart?
+          </button>
+        )}
+        <p>Guessed wrong: {this.state.nWrong}</p>
         <p className='Hangman-word'>{this.guessedWord()}</p>
         <p className='Hangman-btns'>{this.generateButtons()}</p>
       </div>
     );
   }
 }
-
 export default Hangman;
