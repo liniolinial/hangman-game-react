@@ -7,13 +7,16 @@ import img3 from "./3.jpg";
 import img4 from "./4.jpg";
 import img5 from "./5.jpg";
 import img6 from "./6.jpg";
-
+import img7 from "./7.jpg";
+import img8 from "./8.jpg";
+import img9 from "./9.jpg";
+import img10 from "./10.jpg";
 import { randomWord, fetchWords } from "./api";
 
 class Hangman extends Component {
   static defaultProps = {
-    maxWrong: 6,
-    images: [img0, img1, img2, img3, img4, img5, img6],
+    maxWrong: 9,
+    images: [img0, img1, img2, img3, img4, img5, img6, img7, img8, img9, img10],
   };
   constructor(props) {
     super(props);
@@ -28,8 +31,7 @@ class Hangman extends Component {
     this.restart = this.restart.bind(this);
   }
 
-  //die lädt die Wörter
-  //das führt react aus
+  //die lädt die Wörter  //das führt react aus
   async componentDidMount() {
     const words = await fetchWords();
     console.log(words);
@@ -53,6 +55,7 @@ class Hangman extends Component {
       return;
     }
   }
+
   guessedWord() {
     if (this.state.limit === false && this.state.answer) {
       const guessedWord = this.state.answer
@@ -68,6 +71,7 @@ class Hangman extends Component {
       return this.state.answer;
     }
   }
+
   handleGuess(evt) {
     if (this.state.limit) {
       return;
@@ -89,6 +93,7 @@ class Hangman extends Component {
       checkLossCondition,
     );
   }
+
   generateButtons() {
     return "abcdefghijklmnopqrstuvwxyz".split("").map((ltr) => (
       <button
@@ -100,12 +105,16 @@ class Hangman extends Component {
       </button>
     ));
   }
+
   render() {
     return (
       <div className='Hangman'>
         <h1>Hangman</h1>
         {!this.state.limit && (
-          <img src={this.props.images[this.state.nWrong]} />
+          <img
+            src={this.props.images[this.state.nWrong]}
+            alt='hangman-images'
+          />
         )}
         {this.state.limit && <p>YOU LOSE ㅠ_ㅠ</p>}
         {this.state.limit && (

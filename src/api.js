@@ -5,6 +5,7 @@ export const fetchWords = async () => {
   // ohne index.mjs
   return await request.json();
 };
+
 export const randomWord = (words) => {
   return words[Math.floor(Math.random() * words.length)];
 };
