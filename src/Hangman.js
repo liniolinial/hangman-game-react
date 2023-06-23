@@ -96,7 +96,7 @@ class Hangman extends Component {
       <div className='Hangman'>
         <h1>Hangman</h1>
         {!this.state.limit && (
-          <img src={this.props.images[this.state.nWrong]} />
+          <img src={this.props.images[this.state.nWrong]} alt='dsjdfksjh' />
         )}
         {this.state.limit && <p>YOU LOSE ㅠ_ㅠ</p>}
         {this.state.limit && (
