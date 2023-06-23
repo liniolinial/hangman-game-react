@@ -7,7 +7,8 @@ import img3 from "./3.jpg";
 import img4 from "./4.jpg";
 import img5 from "./5.jpg";
 import img6 from "./6.jpg";
-// import { randomWord } from "./words";
+
+import { randomWord, fetchWords } from "./api";
 
 class Hangman extends Component {
   static defaultProps = {
@@ -26,27 +27,24 @@ class Hangman extends Component {
     this.handleGuess = this.handleGuess.bind(this);
     this.restart = this.restart.bind(this);
   }
+
+  //die lädt die Wörter
+  //das führt react aus
   async componentDidMount() {
-    const words = await this.fetchWords();
+    const words = await fetchWords();
     console.log(words);
     this.setState({
       ...this.state,
-      answer: this.randomWord(words),
+      answer: randomWord(words),
       words,
     });
   }
-  async fetchWords() {
-    const request = await fetch("http://localhost/");
-    return await request.json();
-  }
-  randomWord(words) {
-    return words[Math.floor(Math.random() * words.length)];
-  }
+
   restart() {
     if (this.state.limit === true) {
       this.setState({
         ...this.state,
-        answer: this.randomWord(this.state.words),
+        answer: randomWord(this.state.words),
         limit: false,
         nWrong: 0,
         guessed: new Set(),
